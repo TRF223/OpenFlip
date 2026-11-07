@@ -3,8 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>OpenFlip</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=DotGothic16&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#e9e9ec;--panel:#fff;--ink:#1f1f24;--mut:#5b5b67;--line:#c4c4cd;--acc:#c2410c;--on:#fff;--bar:#f28c28;--paper:#fbfaf3;--hi:#1d4ed8;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{--bg:#e9e9ec;--panel:#fff;--ink:#1f1f24;--mut:#5b5b67;--line:#c4c4cd;--acc:#c2410c;--on:#fff;--bar:#f28c28;--paper:#fbfaf3;--hi:#1d4ed8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17171b;--panel:#222228;--ink:#f1f1f4;--mut:#a9a9b5;--line:#3b3b46;--acc:#ff8a3d;--on:#17171b;--bar:#ff8a3d;--hi:#8ab4ff}}
 :root[data-theme="dark"]{--bg:#17171b;--panel:#222228;--ink:#f1f1f4;--mut:#a9a9b5;--line:#3b3b46;--acc:#ff8a3d;--on:#17171b;--bar:#ff8a3d;--hi:#8ab4ff}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -30,7 +29,7 @@ h1{font:400 28px/1 "DotGothic16","Atkinson Hyperlegible",monospace;margin:0 auto
 #tools label{width:100%;color:var(--mut);font-size:14px;font-weight:700}
 .sw{width:36px;height:36px;padding:0;border-radius:50%}
 .sw.on{outline:3px solid var(--hi);outline-offset:2px;border-color:var(--line)}
-#wrap{position:relative;width:100%;max-width:640px;margin:0 auto;aspect-ratio:4/3;border:3px solid var(--ink);border-radius:4px;overflow:hidden;touch-action:none;cursor:crosshair;background:var(--paper);user-select:none}
+#wrap{position:relative;width:100%;max-width:640px;margin:0 auto;aspect-ratio:4/3;border:3px solid var(--ink);border-radius:4px;overflow:hidden;touch-action:pan-y;cursor:crosshair;background:var(--paper);user-select:none}
 #wrap canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated}
 #tl{display:flex;gap:8px;overflow-x:auto;padding:8px;margin-top:8px;background:var(--bg);border-radius:8px}
 .th{position:relative;flex:0 0 auto;border:2px solid var(--line);border-radius:4px;cursor:pointer;background:var(--paper)}
@@ -101,45 +100,45 @@ const vc=[$('#v0').getContext('2d'),$('#v1').getContext('2d')],oc=$('#on').getCo
 const say=t=>{$('#msg').textContent=t};
 function comp(f,ctx,w,h){ctx.imageSmoothingEnabled=false;ctx.fillStyle='#f6f6f1';ctx.fillRect(0,0,w,h);f.l.forEach(c=>ctx.drawImage(c,0,0,w,h))}
 let lastCur=0;function render(){if(lastCur!==cur){const p=lastCur;lastCur=cur;fxGo(p,cur)}
- vc.forEach((c,i)=>{c.clearRect(0,0,W,H);c.drawImage(frames[cur].l[i],0,0)});
- oc.clearRect(0,0,W,H);
- if(onion&&!playing&&cur>0){oc.globalAlpha=.28;frames[cur-1].l.forEach(c=>oc.drawImage(c,0,0));oc.globalAlpha=1}
+  vc.forEach((c,i)=>{c.clearRect(0,0,W,H);c.drawImage(frames[cur].l[i],0,0)});
+  oc.clearRect(0,0,W,H);
+  if(onion&&!playing&&cur>0){oc.globalAlpha=.28;frames[cur-1].l.forEach(c=>oc.drawImage(c,0,0));oc.globalAlpha=1}
 }
 function tl(){
- const t=$('#tl');t.innerHTML='';
- frames.forEach((f,i)=>{const d=document.createElement('div');d.className='th'+(i==cur?' cur':'');d.setAttribute('role','listitem');
-  const c=document.createElement('canvas');c.width=80;c.height=60;comp(f,c.getContext('2d'),80,60);d.append(c);
-  const n=document.createElement('i');n.textContent=i+1;d.append(n);
-  if(f.sfx>=0){const b=document.createElement('b');b.textContent='♪';d.append(b)}
-  d.onclick=()=>{stop();cur=i;tl();render()};t.append(d)});
- $('#cnt').textContent=`(${cur+1} of ${frames.length})`;
- const e=t.children[cur];e&&e.scrollIntoView({block:'nearest',inline:'nearest'});
+  const t=$('#tl');t.innerHTML='';
+  frames.forEach((f,i)=>{const d=document.createElement('div');d.className='th'+(i==cur?' cur':'');d.setAttribute('role','listitem');
+   const c=document.createElement('canvas');c.width=80;c.height=60;comp(f,c.getContext('2d'),80,60);d.append(c);
+   const n=document.createElement('i');n.textContent=i+1;d.append(n);
+   if(f.sfx>=0){const b=document.createElement('b');b.textContent='♪';d.append(b)}
+   d.onclick=()=>{stop();cur=i;tl();render()};t.append(d)});
+  $('#cnt').textContent=`(${cur+1} of ${frames.length})`;
+  const e=t.children[cur];e&&e.scrollIntoView({block:'nearest',inline:'nearest'});
 }
 function thumb(){const c=$('#tl').children[cur]?.querySelector('canvas');c&&comp(frames[cur],c.getContext('2d'),80,60)}
 function pos(e){const r=wrap.getBoundingClientRect();return[Math.max(0,Math.min(W-1,Math.floor((e.clientX-r.left)/r.width*W))),Math.max(0,Math.min(H-1,Math.floor((e.clientY-r.top)/r.height*H)))]}
 const lctx=()=>frames[cur].l[layer].getContext('2d');
 function dot(x,y){const c=lctx(),s=size,o=Math.floor(s/2);if(tool=='eraser')c.clearRect(x-o,y-o,s,s);else{c.fillStyle=COLS[col];c.fillRect(x-o,y-o,s,s)}}
 function line(a,b){let[x0,y0]=a,[x1,y1]=b;const dx=Math.abs(x1-x0),dy=-Math.abs(y1-y0),sx=x0<x1?1:-1,sy=y0<y1?1:-1;let e=dx+dy;
- for(;;){dot(x0,y0);if(x0==x1&&y0==y1)break;const e2=2*e;if(e2>=dy){e+=dy;x0+=sx}if(e2<=dx){e+=dx;y0+=sy}}}
+  for(;;){dot(x0,y0);if(x0==x1&&y0==y1)break;const e2=2*e;if(e2>=dy){e+=dy;x0+=sx}if(e2<=dx){e+=dx;y0+=sy}}}
 function fill(x,y){
- const c=lctx(),img=c.getImageData(0,0,W,H),d=img.data,i0=(y*W+x)*4,t=[d[i0],d[i0+1],d[i0+2],d[i0+3]];
- const h=COLS[col],n=[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16),255];
- if(t.every((v,k)=>v==n[k]))return;
- const m=i=>d[i]==t[0]&&d[i+1]==t[1]&&d[i+2]==t[2]&&d[i+3]==t[3],st=[[x,y]];
- while(st.length){let[px,py]=st.pop();let i=(py*W+px)*4;if(!m(i))continue;
-  let l=px;while(l>0&&m((py*W+l-1)*4))l--;let r=px;while(r<W-1&&m((py*W+r+1)*4))r++;
-  for(let k=l;k<=r;k++){const j=(py*W+k)*4;d[j]=n[0];d[j+1]=n[1];d[j+2]=n[2];d[j+3]=255;
-   if(py>0&&m(((py-1)*W+k)*4))st.push([k,py-1]);if(py<H-1&&m(((py+1)*W+k)*4))st.push([k,py+1])}}
- c.putImageData(img,0,0);
+  const c=lctx(),img=c.getImageData(0,0,W,H),d=img.data,i0=(y*W+x)*4,t=[d[i0],d[i0+1],d[i0+2],d[i0+3]];
+  const h=COLS[col],n=[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16),255];
+  if(t.every((v,k)=>v==n[k]))return;
+  const m=i=>d[i]==t[0]&&d[i+1]==t[1]&&d[i+2]==t[2]&&d[i+3]==t[3],st=[[x,y]];
+  while(st.length){let[px,py]=st.pop();let i=(py*W+px)*4;if(!m(i))continue;
+   let l=px;while(l>0&&m((py*W+l-1)*4))l--;let r=px;while(r<W-1&&m((py*W+r+1)*4))r++;
+   for(let k=l;k<=r;k++){const j=(py*W+k)*4;d[j]=n[0];d[j+1]=n[1];d[j+2]=n[2];d[j+3]=255;
+    if(py>0&&m(((py-1)*W+k)*4))st.push([k,py-1]);if(py<H-1&&m(((py+1)*W+k)*4))st.push([k,py+1])}}
+  c.putImageData(img,0,0);
 }
 function snap(){undoS.push({f:frames[cur],li:layer,d:lctx().getImageData(0,0,W,H)});if(undoS.length>40)undoS.shift()}
 wrap.addEventListener('pointerdown',e=>{stop();wrap.setPointerCapture(e.pointerId);down=true;snap();const p=pos(e);
- if(tool=='fill'){fill(...p);down=false;done()}else if(tool=='fire'){flame(p[0],p[1],cur,Math.max(1,size>>1));last=p;render()}else{dot(...p);last=p;render()}});
+  if(tool=='fill'){fill(...p);down=false;done()}else if(tool=='fire'){flame(p[0],p[1],cur,Math.max(1,size>>1));last=p;render()}else{dot(...p);last=p;render()}});
 wrap.addEventListener('pointermove',e=>{if(!down)return;const p=pos(e);if(tool=='fire'){if(Math.hypot(p[0]-last[0],p[1]-last[1])>10){flame(p[0],p[1],cur,Math.max(1,size>>1));last=p;render()}return}line(last,p);last=p;render()});
-const done=()=>{render();thumb()};
+const done=()=>{render();thumb();saveLocal()};
 wrap.addEventListener('pointerup',()=>{if(down){down=false;done()}});
 wrap.addEventListener('pointercancel',()=>{down=false});
-function undo(){const u=undoS.pop();if(!u)return;const i=frames.indexOf(u.f);if(i<0)return;cur=i;layer=u.li;u.f.l[u.li].getContext('2d').putImageData(u.d,0,0);ui();tl();render()}
+function undo(){const u=undoS.pop();if(!u)return;const i=frames.indexOf(u.f);if(i<0)return;cur=i;layer=u.li;u.f.l[u.li].getContext('2d').putImageData(u.d,0,0);ui();tl();render();saveLocal()}
 function ui(){document.querySelectorAll('[data-l]').forEach(b=>b.classList.toggle('on',+b.dataset.l==layer))}
 // tools
 document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{tool=b.dataset.t;document.querySelectorAll('[data-t]').forEach(x=>x.classList.toggle('on',x==b))});
@@ -147,93 +146,90 @@ document.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{layer=+b.dataset
 COLS.forEach((c,i)=>{const b=document.createElement('button');b.className='sw'+(i==col?' on':'');b.style.background=c;b.setAttribute('aria-label','Colour '+(i+1));b.onclick=()=>{col=i;if(tool=='eraser')setTool('pen');document.querySelectorAll('.sw').forEach(x=>x.classList.toggle('on',x==b))};$('#cols').append(b)});
 function setTool(t){document.querySelector(`[data-t="${t}"]`).click()}
 SIZES.forEach(s=>{const b=document.createElement('button');b.textContent=s+'px';if(s==size)b.className='on';b.onclick=()=>{size=s;[...$('#sizes').children].forEach(x=>x.classList.toggle('on',x==b))};$('#sizes').append(b)});
-$('#onion').onclick=e=>{onion=!onion;e.target.classList.toggle('on',onion);render()};
+$('#onion').onclick=e=>{onion=!onion;e.target.classList.toggle('on',onion);render();saveLocal()};
 $('#undo').onclick=undo;
 // frames
-$('#add').onclick=()=>{stop();frames.splice(cur+1,0,newF());cur++;tl();render()};
-$('#dup').onclick=()=>{stop();const f=newF();f.sfx=-1;f.l.forEach((c,i)=>c.getContext('2d').drawImage(frames[cur].l[i],0,0));frames.splice(cur+1,0,f);cur++;tl();render()};
-$('#clr').onclick=()=>{stop();snap();frames[cur].l.forEach(c=>c.getContext('2d').clearRect(0,0,W,H));undoS.push(undoS.pop());tl();render()};
-$('#del').onclick=()=>{stop();if(frames.length==1){frames[0]=newF()}else{frames.splice(cur,1);cur=Math.min(cur,frames.length-1)}tl();render()};
+$('#add').onclick=()=>{stop();frames.splice(cur+1,0,newF());cur++;tl();render();saveLocal()};
+$('#dup').onclick=()=>{stop();const f=newF();f.sfx=-1;f.l.forEach((c,i)=>c.getContext('2d').drawImage(frames[cur].l[i],0,0));frames.splice(cur+1,0,f);cur++;tl();render();saveLocal()};
+$('#clr').onclick=()=>{stop();snap();frames[cur].l.forEach(c=>c.getContext('2d').clearRect(0,0,W,H));undoS.push(undoS.pop());tl();render();saveLocal()};
+$('#del').onclick=()=>{stop();if(frames.length==1){frames[0]=newF()}else{frames.splice(cur,1);cur=Math.min(cur,frames.length-1)}tl();render();saveLocal()};
 // playback
 function stop(){if(!playing)return;playing=false;clearTimeout(timer);$('#play').textContent='Play';$('#play').classList.add('on');render()}
 function tick(){render();tl();trig(frames[cur].sfx);
- timer=setTimeout(()=>{if(!playing)return;if(cur<frames.length-1)cur++;else if(loop)cur=0;else{stop();return}tick()},1000/+$('#fps').value)}
-$('#play').onclick=()=>{if(playing){stop();return}playing=true;ensure();$('#play').textContent='Stop';$('#play').classList.remove('on');if(cur>=frames.length-1&&frames.length>1)cur=0;tick()};
-$('#loop').onclick=e=>{loop=!loop;e.target.classList.toggle('on',loop)};
+  timer=setTimeout(()=>{if(!playing)return;if(cur<frames.length-1){cur++;tick();return}if(loop){cur=0;tick();return}stop()},1000/+$('#fps').value)}
+$('#play').onclick=()=>{if(playing){stop();return}playing=true;ensure();$('#play').textContent='Stop';$('#play').classList.remove('on');if(cur>=frames.length-1&&frames.length>1)cur=0;tick();saveLocal()};
+$('#loop').onclick=e=>{loop=!loop;e.target.classList.toggle('on',loop);saveLocal()};
 $('#png').onclick=()=>{const c=mk();comp(frames[cur],c.getContext('2d'),W,H);const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download='frame-'+(cur+1)+'.png';document.body.append(a);a.click();a.remove()};
 // audio
 let ac=null,sfx=[{n:'Blip'},{n:'Jump'},{n:'Boom'},{n:'Laser'},{n:'Coin'},{n:'Fire'},{n:'Blast'},{n:'Power'},{n:'Hit'},{n:'Whoosh'},{n:'Sparkle'},{n:'Kick'},{n:'Snare'},{n:'Alarm'}];
 function gen(d,fn){const r=ac.sampleRate,b=ac.createBuffer(1,Math.floor(d*r),r),a=b.getChannelData(0);let ph=0;for(let i=0;i<a.length;i++)a[i]=fn(i/r,d,i,()=>ph,v=>ph=v)*.6;return b}
 const sq=x=>Math.sign(Math.sin(2*Math.PI*x));
 function synth(n,i){const f={
- Blip:t=>sq(660*t)*(1-t/.15),
- Jump:(t,d,j,g,s)=>{s(g()+(300+900*t/d)/ac.sampleRate);return sq(g())*(1-t/d)},
- Boom:(t)=>(Math.random()*2-1)*Math.exp(-t*7),
- Laser:(t,d,j,g,s)=>{s(g()+(1400-1200*t/d)/ac.sampleRate);return((g()%1)*2-1)*(1-t/d)},
- Coin:t=>sq((t<.07?988:1319)*t)*Math.exp(-t*5),
- Fire:(t,d,j,g,s)=>{const y=g()*.93+(Math.random()*2-1)*.07;s(y);return y*4*(1-t/d*.4)+(Math.random()<.0008?(Math.random()*2-1)*.8:0)},
- Blast:(t,d,j,g,s)=>{const y=g()*.97+(Math.random()*2-1)*.03;s(y);return y*8*Math.exp(-t*3)+Math.sin(2*Math.PI*(60-40*t)*t)*Math.exp(-t*5)},
- Power:t=>sq([523,659,784,1047,1319][Math.min(4,t/.06|0)]*t)*(1-t/.8),
- Hit:t=>(sq(120*t)*.6+(Math.random()*2-1)*.6)*Math.exp(-t*30),
- Whoosh:(t,d,j,g,s)=>{const y=g()*.8+(Math.random()*2-1)*.2;s(y);return y*3*Math.pow(Math.sin(Math.PI*t/d),2)},
- Sparkle:t=>Math.sin(2*Math.PI*(2000+((t*30)|0)%5*400)*t)*Math.exp(-t*6),
- Kick:(t,d,j,g,s)=>{s(g()+(150*Math.exp(-t*20)+45)/ac.sampleRate);return Math.sin(2*Math.PI*g())*Math.exp(-t*8)},
- Snare:t=>((Math.random()*2-1)*.8+Math.sin(2*Math.PI*190*t)*.4)*Math.exp(-t*16),
- Alarm:t=>sq((t*8%1<.5?700:900)*t)*.6}[n];
- return gen({Blip:.15,Jump:.3,Boom:.7,Laser:.35,Coin:.4,Fire:1.2,Blast:.9,Power:.4,Hit:.2,Whoosh:.5,Sparkle:.5,Kick:.35,Snare:.25,Alarm:.6}[n],f)}
-function crush(raw){const bits=+$('#bits').value,rate=+$('#rate').value,r=raw.sampleRate,o=ac.createBuffer(1,raw.length,r),a=raw.getChannelData(0),q=o.getChannelData(0),lv=Math.pow(2,bits-1),st=Math.max(1,r/rate);
- let hold=0,nx=0;for(let i=0;i<a.length;i++){if(i>=nx){hold=Math.max(-1,Math.min(1,Math.round(a[i]*lv)/lv));nx+=st}q[i]=crushOn?hold*mix+a[i]*(1-mix):a[i]}return o}
+  Blip:t=>sq(660*t)*(1-t/.15),
+  Jump:(t,d,j,g,s)=>{s(g()+(300+900*t/d)/ac.sampleRate);return sq(g())*(1-t/d)},
+  Boom:(t)=>(Math.random()*2-1)*Math.exp(-t*7),
+  Laser:(t,d,j,g,s)=>{s(g()+(1400-1200*t/d)/ac.sampleRate);return((g()%1)*2-1)*(1-t/d)},
+  Coin:t=>sq((t<.07?988:1319)*t)*Math.exp(-t*5),
+  Fire:(t,d,j,g,s)=>{const y=g()*.93+(Math.random()*2-1)*.07;s(y);return y*4*(1-t/d*.4)+(Math.random()<.0008?(Math.random()*2-1)*.8:0)},
+  Blast:(t,d,j,g,s)=>{const y=g()*.97+(Math.random()*2-1)*.03;s(y);return y*8*Math.exp(-t*3)+Math.sin(2*Math.PI*(60-40*t)*t)*Math.exp(-t*5)},
+  Power:t=>sq([523,659,784,1047,1319][Math.min(4,t/.06|0)]*t)*(1-t/.8),
+  Hit:t=>(sq(120*t)*.6+(Math.random()*2-1)*.6)*Math.exp(-t*30),
+  Whoosh:(t,d,j,g,s)=>{const y=g()*.8+(Math.random()*2-1)*.2;s(y);return y*3*Math.pow(Math.sin(Math.PI*t/d),2)},
+  Sparkle:t=>Math.sin(2*Math.PI*(2000+((t*30)|0)%5*400)*t)*Math.exp(-t*6),
+  Kick:(t,d,j,g,s)=>{s(g()+(150*Math.exp(-t*20)+45)/ac.sampleRate);return Math.sin(2*Math.PI*g())*Math.exp(-t*8)},
+  Snare:t=>((Math.random()*2-1)*.8+Math.sin(2*Math.PI*190*t)*.4)*Math.exp(-t*16),
+  Alarm:t=>sq((t*8%1<.5?700:900)*t)*.6}[n];
+  return gen({Blip:.15,Jump:.3,Boom:.7,Laser:.35,Coin:.4,Fire:1.2,Blast:.9,Power:.4,Hit:.2,Whoosh:.5,Sparkle:.5,Kick:.35,Snare:.25,Alarm:.6}[n],f)}
+function crush(raw){const bits=+$('#bits').value,rate=+$('#rate').value,r=raw.sampleRate,o=ac.createBuffer(1,raw.length,r),a=raw.getChannelData(0),q=o.getChannelData(0),lv=Math.pow(2,bits-1),st=Math.max(1,Math.round(r/rate));
+  let hold=0,nx=0;for(let i=0;i<a.length;i++){if(i>=nx){hold=Math.max(-1,Math.min(1,Math.round(a[i]*lv)/lv));nx+=st}q[i]=crushOn?hold*mix+a[i]*(1-mix):a[i]}return o}
 function recrush(){if(!ac)return;sfx.forEach(s=>{if(s.raw)s.buf=crush(s.raw)})}
 function ensure(){if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();sfx.forEach((s,i)=>{if(!s.raw)s.raw=synth(s.n,i)});recrush()}if(ac.state!='running')ac.resume()}
-function trig(i){if(i<0||!ac||!sfx[i]||!sfx[i].buf)return;const s=ac.createBufferSource();s.buffer=sfx[i].buf;const gn=ac.createGain();gn.gain.value=vol;s.connect(gn);gn.connect(ac.destination);s.start()}
-function pads(){const p=$('#pads');p.innerHTML='';sfx.forEach((s,i)=>{const b=document.createElement('button');b.textContent=s.n;if(i==sel)b.className='on';b.onclick=()=>{ensure();sel=i;pads();trig(i)};p.append(b)})}
+function trig(i){if(i<0||!ac||!sfx[i]||!sfx[i].buf)return;const s=ac.createBufferSource();s.buffer=sfx[i].buf;const gn=ac.createGain();gn.gain.value=vol;s.connect(gn);gn.connect(ac.destination);s.start();s.onended=()=>{s.disconnect();gn.disconnect()}}
+function pads(){const p=$('#pads');p.innerHTML='';sfx.forEach((s,i)=>{const b=document.createElement('button');b.textContent=s.n;if(i==sel)b.className='on';b.onclick=()=>{ensure();sel=i;pads();trig(sel)};p.append(b)})}
 ['bits','rate'].forEach(id=>$('#'+id).oninput=()=>{$('#bitsv').textContent=$('#bits').value+' bit';$('#ratev').textContent=$('#rate').value+' Hz';ensure();recrush();clearTimeout(window._pv);window._pv=setTimeout(()=>trig(sel),120)});
-$('#place').onclick=()=>{ensure();frames[cur].sfx=sel;tl();trig(sel)};
-$('#unplace').onclick=()=>{frames[cur].sfx=-1;tl()};
+$('#place').onclick=()=>{ensure();frames[cur].sfx=sel;tl();trig(sel);saveLocal()};
+$('#unplace').onclick=()=>{frames[cur].sfx=-1;tl();saveLocal()};
 function addRaw(raw,name){ensure();const a=raw.getChannelData(0);let p=0;for(let i=0;i<a.length;i++)p=Math.max(p,Math.abs(a[i]));if(p>0){const g=.9/p;for(let i=0;i<a.length;i++)a[i]*=g}
- sfx.push({n:name,raw,buf:crush(raw)});sel=sfx.length-1;pads();trig(sel)}
-async function addBuf(ab,name){ensure();const dec=await ac.decodeAudioData(ab);const n=Math.min(dec.length,Math.floor(dec.sampleRate*8));const raw=ac.createBuffer(1,n,dec.sampleRate);raw.getChannelData(0).set(dec.getChannelData(0).subarray(0,n));addRaw(raw,name);say(name+' added (first 8 seconds kept).')}
+  sfx.push({n:name,raw,buf:crush(raw)});sel=sfx.length-1;pads();trig(sel);saveLocal()}
+async function addBuf(ab,name){ensure();const dec=await ac.decodeAudioData(ab);const n=Math.min(dec.length,Math.floor(dec.sampleRate*8));const raw=ac.createBuffer(1,n,dec.sampleRate);raw.getChannelData(0).set(dec.getChannelData(0).slice(0,n));addRaw(raw,name)}
 const fh=async e=>{const f=e.target.files[0];if(!f)return;try{await addBuf(await f.arrayBuffer(),f.name.slice(0,10)||'Audio')}catch(x){say('Could not read that audio file.')}e.target.value=''};
 $('#file').onchange=fh;$('#file2').onchange=fh;
 let rec=null;
 async function startRec(){
- ensure();
- if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){say('This browser has no microphone access here. Use Import audio or Capture instead.');return}
- let s;try{s=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}})}
- catch(x){say(x&&x.name=='NotAllowedError'?'Microphone blocked. Allow it for this page in the address bar, or open the artifact in its own tab. Import audio and Capture still work.':'No microphone found. Use Import audio or Capture instead.');return}
- const src=ac.createMediaStreamSource(s),pr=ac.createScriptProcessor(4096,1,1),mute=ac.createGain(),chunks=[];mute.gain.value=0;
- pr.onaudioprocess=e=>{const d=new Float32Array(e.inputBuffer.getChannelData(0));chunks.push(d);let p=0;for(let i=0;i<d.length;i++)p=Math.max(p,Math.abs(d[i]));
-  $('#meter i').style.width=Math.min(100,p*140)+'%';const sec=chunks.length*4096/ac.sampleRate;$('#rt').textContent=sec.toFixed(1)+' / 8 s';if(sec>=8)stopRec()};
- src.connect(pr);pr.connect(mute);mute.connect(ac.destination);rec={s,src,pr,mute,chunks};
- $('#rec').textContent='■ Stop';$('#rec').classList.add('on');say('Recording. Speak now.');
+  ensure();
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){say('This browser has no microphone access here. Use Import audio or Capture instead.');return}
+  let s;try{s=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}})}catch(x){say(x&&x.name=='NotAllowedError'?'Microphone blocked. Allow it for this page in the address bar, or open the artifact in its own tab. Import audio and Capture still work.':'No microphone found. Use Import audio or Capture instead.');return}
+  const src=ac.createMediaStreamSource(s),pr=ac.createScriptProcessor(4096,1,1),mute=ac.createGain(),chunks=[];mute.gain.value=0;
+  pr.onaudioprocess=e=>{const d=new Float32Array(e.inputBuffer.getChannelData(0));chunks.push(d);let p=0;for(let i=0;i<d.length;i++)p=Math.max(p,Math.abs(d[i]));
+   $('#meter i').style.width=Math.min(100,p*140)+'%';const sec=chunks.length*4096/ac.sampleRate;$('#rt').textContent=sec.toFixed(1)+' / 8 s';if(sec>=8)stopRec()};
+  src.connect(pr);pr.connect(mute);mute.connect(ac.destination);rec={s,src,pr,mute,chunks};
+  $('#rec').textContent='■ Stop';$('#rec').classList.add('on');say('Recording. Speak now.');
 }
 function stopRec(){
- if(!rec)return;const r=rec;rec=null;r.pr.onaudioprocess=null;r.src.disconnect();r.pr.disconnect();r.mute.disconnect();r.s.getTracks().forEach(t=>t.stop());
- $('#rec').textContent='● Record voice';$('#rec').classList.remove('on');$('#meter i').style.width='0';$('#rt').textContent='';
- const n=r.chunks.reduce((a,c)=>a+c.length,0);if(!n){say('Nothing was recorded.');return}
- const raw=ac.createBuffer(1,n,ac.sampleRate),o=raw.getChannelData(0);let k=0;r.chunks.forEach(c=>{o.set(c,k);k+=c.length});
- addRaw(raw,'Voice '+sfx.length);say('Voice saved and crushed. Drag the sliders to change the sound.');
+  if(!rec)return;const r=rec;rec=null;r.pr.onaudioprocess=null;r.src.disconnect();r.pr.disconnect();r.mute.disconnect();r.s.getTracks().forEach(t=>t.stop());
+  $('#rec').textContent='● Record voice';$('#rec').classList.remove('on');$('#meter i').style.width='0';$('#rt').textContent='';
+  const n=r.chunks.reduce((a,c)=>a+c.length,0);if(!n){say('Nothing was recorded.');return}
+  const raw=ac.createBuffer(1,n,ac.sampleRate),o=raw.getChannelData(0);let k=0;r.chunks.forEach(c=>{o.set(c,k);k+=c.length});
+  addRaw(raw,'Voice '+sfx.length);say('Voice saved and crushed. Drag the sliders to change the sound.');
 }
 $('#rec').onclick=()=>rec?stopRec():startRec();
-
 // fire, page flip, settings
 function flame(cx,cy,ph,sc){const c=lctx();[['#e2331b',1,8],['#f7931e',.7,5],['#ffd23a',.4,3]].forEach(([k,h,mw])=>{c.fillStyle=k;const Hh=Math.round(22*h);
- for(let r=0;r<Hh;r++){const t=r/Hh,w=Math.round(mw*Math.sin(Math.PI*Math.pow(t,.7))),o=Math.round(Math.sin(r*.45+ph*2.1)*(1-t)*3);if(w<1)continue;c.fillRect(cx+(o-w)*sc,cy-(Hh-r)*sc,2*w*sc,sc)}})}
+  for(let r=0;r<Hh;r++){const t=r/Hh,w=Math.round(mw*Math.sin(Math.PI*Math.pow(t,.7))),o=Math.round(Math.sin(r*.45+ph*2.1)*(1-t)*3);if(w<1)continue;c.fillRect(cx+(o-w)*sc,cy-(Hh-r)*sc,2*w*sc,sc)}})}
 let fx='flip',vol=.8,adv=false,crushOn=true,mix=1,L='en',bz=0;
 function fxGo(p,c){if(playing||fx=='none'||!frames[p]||!frames[c]||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
- const fw=c>p||(playing&&c==0),lf=mk();comp(frames[p],lf.getContext('2d'),W,H);
- lf.style.cssText='position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;z-index:5;pointer-events:none;transform-origin:'+(fw?'0 50%':'100% 50%');
- wrap.append(lf);const ms=Math.max(60,Math.min(340,playing?800/+$('#fps').value:340)),d=fw?-1:1;
- const T=fx=='flip'?['perspective(700px) rotateY(0deg)','perspective(700px) rotateY('+d*100+'deg)']:fx=='slide'?['translateX(0%)','translateX('+d*100+'%)']:['none','none'];
- lf.animate([{transform:T[0],filter:'brightness(1)',opacity:1},{transform:T[1],filter:'brightness(.55)',opacity:fx=='fade'?0:1}],{duration:ms,easing:'ease-in-out'}).onfinish=()=>lf.remove()}
-const D={de:{'Undo':'Rückgängig','Play':'Abspielen','Stop':'Stopp','Loop':'Schleife','Save frame PNG':'Bild als PNG','Tool':'Werkzeug','Pen':'Stift','Eraser':'Radierer','Fill':'Füllen','Fire':'Feuer','Colour':'Farbe','Size':'Größe','Layer':'Ebene','Layer 1':'Ebene 1','Layer 2':'Ebene 2','Onion skin':'Zwiebelschale','Previous frame':'Vorheriges Bild','Frames':'Bilder','+ New':'+ Neu','Duplicate':'Duplizieren','Clear':'Leeren','Delete':'Löschen','Sound and bitcrusher':'Sound und Bitcrusher','Bit depth':'Bittiefe','Sample rate':'Abtastrate','Put on this frame':'Auf dieses Bild','Remove from frame':'Vom Bild entfernen','● Record voice':'● Stimme aufnehmen','■ Stop':'■ Stopp','Import audio':'Audio importieren','Capture':'Aufnahme','Settings':'Einstellungen','Language':'Sprache','Theme':'Design','Light':'Hell','Dark':'Dunkel','Page effect':'Blättereffekt','Page flip':'Umblättern','Slide':'Schieben','Fade':'Überblenden','None':'Aus','Volume':'Lautstärke','Advanced mode':'Erweiterter Modus','Crusher on':'Crusher an','Pick a sound, put it on a frame, and it plays when playback reaches that frame.':'Sound wählen, auf ein Bild legen – er spielt, sobald die Wiedergabe es erreicht.','Bitcrusher is locked. Turn on Advanced mode in Settings to change it.':'Bitcrusher ist gesperrt. Aktiviere den erweiterten Modus in den Einstellungen.','Advanced mode unlocks the bitcrusher sliders. Off keeps the classic crunch.':'Der erweiterte Modus schaltet die Bitcrusher-Regler frei. Aus = klassischer Crunch.'},
-es:{'Undo':'Deshacer','Play':'Reproducir','Stop':'Parar','Loop':'Bucle','Save frame PNG':'Guardar PNG','Tool':'Herramienta','Pen':'Lápiz','Eraser':'Borrador','Fill':'Rellenar','Fire':'Fuego','Colour':'Color','Size':'Tamaño','Layer':'Capa','Layer 1':'Capa 1','Layer 2':'Capa 2','Onion skin':'Papel cebolla','Previous frame':'Cuadro anterior','Frames':'Cuadros','+ New':'+ Nuevo','Duplicate':'Duplicar','Clear':'Borrar','Delete':'Eliminar','Sound and bitcrusher':'Sonido y bitcrusher','Bit depth':'Bits','Sample rate':'Frecuencia','Put on this frame':'Poner en este cuadro','Remove from frame':'Quitar del cuadro','● Record voice':'● Grabar voz','■ Stop':'■ Parar','Import audio':'Importar audio','Capture':'Capturar','Settings':'Ajustes','Language':'Idioma','Theme':'Tema','Light':'Claro','Dark':'Oscuro','Page effect':'Efecto de página','Page flip':'Pasar página','Slide':'Deslizar','Fade':'Fundido','None':'Ninguno','Volume':'Volumen','Advanced mode':'Modo avanzado','Crusher on':'Crusher activo','Mix':'Mezcla','Pick a sound, put it on a frame, and it plays when playback reaches that frame.':'Elige un sonido, ponlo en un cuadro y sonará cuando la reproducción llegue a él.','Bitcrusher is locked. Turn on Advanced mode in Settings to change it.':'Bitcrusher bloqueado. Activa el modo avanzado en Ajustes para cambiarlo.','Advanced mode unlocks the bitcrusher sliders. Off keeps the classic crunch.':'El modo avanzado desbloquea los controles del bitcrusher. Desactivado mantiene el sonido clásico.'}};
-function T(){const w=document.createTreeWalker(document.body,4);let n;while(n=w.nextNode()){if(n.parentNode.tagName=='SCRIPT')continue;if(n._en===undefined){if(!n.nodeValue.trim())continue;n._en=n.nodeValue}
- const k=n._en.trim(),v=n._en.replace(k,(D[L]||{})[k]||k);if(n.nodeValue!=v)n.nodeValue=v}}
+  const fw=c>p||(playing&&c==0),lf=mk();comp(frames[p],lf.getContext('2d'),W,H);
+  lf.style.cssText='position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;z-index:5;pointer-events:none;transform-origin:'+(fw?'0 50%':'100% 50%');
+  wrap.append(lf);const ms=Math.max(60,Math.min(340,playing?800/+$('#fps').value:340)),d=fw?-1:1;
+  const T=fx=='flip'?['perspective(700px) rotateY(0deg)','perspective(700px) rotateY('+d*100+'deg)']:fx=='slide'?['translateX(0%)','translateX('+d*100+'%)']:['none','none'];
+  lf.animate([{transform:T[0],filter:'brightness(1)',opacity:1},{transform:T[1],filter:'brightness(.55)',opacity:fx=='fade'?0:1}],{duration:ms,easing:'ease-in-out'}).onfinish=()=>lf.remove()}
+const D={de:{'Undo':'Rückgängig','Play':'Abspielen','Stop':'Stopp','Loop':'Schleife','Save frame PNG':'Bild als PNG','Tool':'Werkzeug','Pen':'Stift','Eraser':'Radierer','Fill':'Füllen','Fire':'Feuer','Colour':'Farbe','Size':'Größe','Layer':'Ebene','Onion skin':'Zwiebelschale','Previous frame':'Vorheriges Bild','Frames':'Bilder','+ New':'+ Neu','Duplicate':'Duplizieren','Clear':'Löschen','Delete':'Entfernen','Sound and bitcrusher':'Sound und Bitcrusher','Bit depth':'Bit-Tiefe','Sample rate':'Abtastrate','Mix':'Mischung','Crusher on':'Crusher ein','Record voice':'Stimme aufnehmen','Put on this frame':'Auf dieses Bild setzen','Remove from frame':'Vom Bild entfernen','Import audio':'Audio importieren','Capture':'Aufnehmen','Settings':'Einstellungen','Language':'Sprache','Theme':'Design','Light':'Hell','Dark':'Dunkel','Page effect':'Seiteneffekt','Flip':'Umdrehen','Slide':'Schieben','Fade':'Überblenden','None':'Aus','Volume':'Lautstärke','Advanced mode':'Erweiterter Modus','Bitcrusher is locked. Turn on Advanced mode in Settings to change it.':'Bitcrusher ist gesperrt. Aktiviere den erweiterten Modus in den Einstellungen, um ihn zu ändern.'},
+  es:{'Undo':'Deshacer','Play':'Reproducir','Stop':'Parar','Loop':'Bucle','Save frame PNG':'Guardar PNG','Tool':'Herramienta','Pen':'Lápiz','Eraser':'Borrador','Fill':'Rellenar','Fire':'Fuego','Colour':'Color','Size':'Tamaño','Layer':'Capa','Onion skin':'Piel de cebolla','Previous frame':'Fotograma anterior','Frames':'Fotogramas','+ New':'+ Nuevo','Duplicate':'Duplicar','Clear':'Borrar','Delete':'Eliminar','Sound and bitcrusher':'Sonido y bitcrusher','Bit depth':'Profundidad de bits','Sample rate':'Frecuencia de muestreo','Mix':'Mezcla','Crusher on':'Triturador activado','Record voice':'Grabar voz','Put on this frame':'Poner en este fotograma','Remove from frame':'Quitar del fotograma','Import audio':'Importar audio','Capture':'Capturar','Settings':'Ajustes','Language':'Idioma','Theme':'Tema','Light':'Claro','Dark':'Oscuro','Page effect':'Efecto de página','Flip':'Voltear','Slide':'Deslizar','Fade':'Fundido','None':'Ninguno','Volume':'Volumen','Advanced mode':'Modo avanzado','Bitcrusher is locked. Turn on Advanced mode in Settings to change it.':'El bitcrusher está bloqueado. Activa el modo avanzado en Ajustes para cambiarlo.'}};
+function T(){const w=document.createTreeWalker(document.body,4);let n;while(n=w.nextNode()){if(n.parentNode&&n.parentNode.tagName=='SCRIPT')continue;if(n.nodeType===3&&n.nodeValue&&n._en===undefined){if(!n.nodeValue.trim())continue;n._en=n.nodeValue;const k=n.nodeValue.trim();const v=(D[L]||{})[k]||k;if(n.nodeValue!=v)n.nodeValue=v}}}
 new MutationObserver(()=>{if(bz)return;bz=1;T();bz=0}).observe(document.body,{childList:true,subtree:true,characterData:true});
 const lab=()=>{$('#bitsv').textContent=$('#bits').value+' bit';$('#ratev').textContent=$('#rate').value+' Hz'};
 function setAdv(on){adv=on;$('#adv_t').checked=on;$('#adv').hidden=!on;$('#lock').hidden=on;['bits','rate'].forEach(id=>$('#'+id).disabled=!on);
- if(!on){$('#bits').value=5;$('#rate').value=6000;crushOn=true;mix=1;$('#con').checked=true;$('#mix').value=100;$('#mixv').textContent='100%';lab();recrush()}}
+  if(!on){$('#bits').value=5;$('#rate').value=6000;crushOn=true;mix=1;$('#con').checked=true;$('#mix').value=100;$('#mixv').textContent='100%';lab();recrush()}}
 function save(){try{localStorage.setItem('openflip',JSON.stringify({L,th:$('#thm').value,fx,vol,adv}))}catch(e){}}
 function setTheme(v){const r=document.documentElement;v=='auto'?r.removeAttribute('data-theme'):r.dataset.theme=v}
 const closeSet=()=>{$('#set').hidden=true;$('#gear').focus()};
@@ -246,14 +242,98 @@ $('#vol').oninput=e=>{vol=e.target.value/100;save()};
 $('#adv_t').onchange=e=>{setAdv(e.target.checked);save()};
 $('#mix').oninput=e=>{mix=e.target.value/100;$('#mixv').textContent=e.target.value+'%';ensure();recrush();clearTimeout(window._pv);window._pv=setTimeout(()=>trig(sel),120)};
 $('#con').onchange=e=>{crushOn=e.target.checked;ensure();recrush();trig(sel)};
-try{const v=JSON.parse(localStorage.getItem('openflip')||'{}');if(v.L){L=v.L;$('#lang').value=L}if(v.th){$('#thm').value=v.th;setTheme(v.th)}if(v.fx){fx=v.fx;$('#fx').value=fx}if(v.vol!=null){vol=v.vol;$('#vol').value=vol*100}adv=!!v.adv}catch(e){}
+try{const v=JSON.parse(localStorage.getItem('openflip')||'{}');if(v.L){L=v.L;$('#lang').value=L}if(v.th){$('#thm').value=v.th;setTheme(v.th)}if(v.fx){fx=v.fx;$('#fx').value=fx}if(v.vol!=null){vol=v.vol;$('#vol').value=Math.round(vol*100)}if(v.adv!=null){adv=v.adv;setAdv(adv)}}catch(e){}
 setAdv(adv);T();
 // keys
 addEventListener('keydown',e=>{if(!$('#set').hidden)return;if(/INPUT|SELECT/.test(e.target.tagName)&&e.target.type!='range')return;
- if(e.code=='Space'){e.preventDefault();$('#play').click()}
- else if((e.ctrlKey||e.metaKey)&&e.key=='z'){e.preventDefault();undo()}
- else if(e.key=='ArrowLeft'&&cur>0){stop();cur--;tl();render()}
- else if(e.key=='ArrowRight'&&cur<frames.length-1){stop();cur++;tl();render()}
- else if(e.key=='b')setTool('pen');else if(e.key=='e')setTool('eraser');else if(e.key=='g')setTool('fill');else if(e.key=='f')setTool('fire')});
+  if(e.code=='Space'){e.preventDefault();$('#play').click()}
+  else if((e.ctrlKey||e.metaKey)&&e.key=='z'){e.preventDefault();undo()}
+  else if(e.key=='ArrowLeft'&&cur>0){stop();cur--;tl();render()}
+  else if(e.key=='ArrowRight'&&cur<frames.length-1){stop();cur++;tl();render()}
+  else if(e.key=='b')setTool('pen');else if(e.key=='e')setTool('eraser');else if(e.key=='g')setTool('fill');else if(e.key=='f')setTool('fire')});
+
+const SAVE_KEY='openflip-save-v1';
+function dataUrlFromCanvas(c){return c.toDataURL('image/png')}
+function audioBufferToWav(ab){
+  const len=ab.length; const ch=ab.numberOfChannels; const sr=ab.sampleRate; const bytesPerSample=2; const blockAlign=ch*bytesPerSample; const dataLength=len*blockAlign; const buffer=new ArrayBuffer(44+dataLength); const view=new DataView(buffer);
+  function writeString(offset,str){for(let i=0;i<str.length;i++)view.setUint8(offset+i,str.charCodeAt(i))}
+  writeString(0,'RIFF'); view.setUint32(4,36+dataLength,true); writeString(8,'WAVE'); writeString(12,'fmt '); view.setUint32(16,16,true); view.setUint16(20,1,true); view.setUint16(22,ch,true); view.setUint32(24,sr,true); view.setUint32(28,sr*blockAlign,true); view.setUint16(32,blockAlign,true); view.setUint16(34,bytesPerSample*8,true); writeString(36,'data'); view.setUint32(40,dataLength,true);
+  const channels=[]; for(let i=0;i<ch;i++)channels.push(ab.getChannelData(i));
+  let offset=44; for(let s=0;s<len;s++){for(let i=0;i<ch;i++){const v=Math.max(-1,Math.min(1,channels[i][s]));view.setInt16(offset, v<0 ? v*0x8000 : v*0x7fff, true); offset += 2}};
+  return buffer;
+}
+async function encodeAudioBufferToDataUrl(ab){
+  return new Promise((resolve,reject)=>{
+    const blob=new Blob([audioBufferToWav(ab)], {type:'audio/wav'});
+    const fr=new FileReader();
+    fr.onload=()=>resolve(fr.result);
+    fr.onerror=()=>reject(new Error('Wave encode failed'));
+    fr.readAsDataURL(blob);
+  });
+}
+async function saveLocal(){
+  try{
+    if(!frames || !frames.length) return;
+    const payload={version:1,frames:frames.map(f=>({sfx:f.sfx,l:f.l.map(dataUrlFromCanvas)})),cur,layer,tool,col,size,onion,loop,fx,vol,adv,L,theme:$('#thm').value,sounds: await Promise.all(sfx.map(async s=>({n:s.n, raw:s.raw ? await encodeAudioBufferToDataUrl(s.raw) : null})))};
+    localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
+  }catch(e){console.warn('save failed',e)}
+}
+async function loadCanvasFromDataUrl(canvas,dataUrl){
+  if(!dataUrl) return;
+  const img=new Image();
+  img.decoding='async';
+  await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;img.src=dataUrl});
+  const ctx=canvas.getContext('2d'); ctx.clearRect(0,0,W,H); ctx.drawImage(img,0,0,W,H);
+}
+async function restoreLocal(){
+  try{
+    const text=localStorage.getItem(SAVE_KEY); if(!text) return;
+    const saved=JSON.parse(text); if(!saved || !Array.isArray(saved.frames)) return;
+    frames=saved.frames.map(f=>({l:[mk(),mk()],sfx:(typeof f.sfx==='number'?f.sfx:-1)}));
+    for(let fi=0;fi<saved.frames.length;fi++){
+      const f=saved.frames[fi], frame=frames[fi];
+      for(let li=0;li<Math.min(f.l.length,frame.l.length);li++){
+        await loadCanvasFromDataUrl(frame.l[li],f.l[li]);
+      }
+    }
+    cur=Math.max(0,Math.min(Number(saved.cur)||0,frames.length-1));
+    layer=Math.max(0,Math.min(Number(saved.layer)||0,1));
+    tool=saved.tool||tool;
+    col=Math.max(0,Math.min(Number(saved.col)||0,COLS.length-1));
+    size=Math.max(1,Math.min(Number(saved.size)||size,SIZES[SIZES.length-1]));
+    onion=saved.onion!==false;
+    loop=saved.loop!==false;
+    fx=saved.fx||fx;
+    if(saved.vol!=null){vol=+saved.vol;$('#vol').value=Math.round(vol*100)}
+    if(saved.adv!=null){adv=saved.adv;setAdv(adv)}
+    if(saved.L){L=saved.L;$('#lang').value=L;document.documentElement.lang=L}
+    if(saved.theme){$('#thm').value=saved.theme;setTheme(saved.theme)}
+    if(saved.fx){$('#fx').value=saved.fx}
+    if(typeof saved.loop==='boolean'){$('#loop').classList.toggle('on',saved.loop);}
+    if(saved.sounds && Array.isArray(saved.sounds)){
+      ensure();
+      sfx=[];
+      for(const sound of saved.sounds){
+        const entry={n:sound.n||'Saved Voice'};
+        if(sound.raw){
+          try{const res=await fetch(sound.raw); const ab=await res.arrayBuffer(); const decoded=await ac.decodeAudioData(ab); entry.raw=decoded;}
+          catch(e){console.warn('restore sound failed',e)}
+        }
+        sfx.push(entry);
+      }
+      if(!sfx.length)sfx=[{n:'Blip'},{n:'Jump'},{n:'Boom'},{n:'Laser'},{n:'Coin'},{n:'Fire'},{n:'Blast'},{n:'Power'},{n:'Hit'},{n:'Whoosh'},{n:'Sparkle'},{n:'Kick'},{n:'Snare'},{n:'Alarm'}];
+      sel=Math.min(sel,sfx.length-1);
+      pads();
+    }
+    ui();
+    tl();
+    render();
+    save();
+  }catch(e){console.warn('restore failed',e)}
+}
+
 pads();tl();render();say('Draw on the canvas. Space plays, arrow keys step through frames.');
+restoreLocal();
+window.addEventListener('beforeunload',()=>saveLocal());
+setInterval(()=>saveLocal(),8000);
 </script></body></html>
