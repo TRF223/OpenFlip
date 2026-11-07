@@ -55,7 +55,7 @@ input:disabled{opacity:.4}
 <header><h1>OpenFlip</h1><button id="gear" aria-label="Settings">⚙</button>
 <div class="row"><button id="undo" title="Ctrl+Z">Undo</button><button id="play" class="on" title="Space">Play</button>
 <select id="fps" aria-label="Frames per second"><option>1</option><option>2</option><option>4</option><option selected>6</option><option>8</option><option>12</option><option>24</option></select><small>fps</small>
-<button id="loop" class="on">Loop</button><button id="png">Save frame PNG</button></div></header>
+<button id="loop">Loop</button><button id="png">Save frame PNG</button></div></header>
 <div id="main">
 <div id="tools" class="box">
 <label>Tool</label><div class="g"><button data-t="pen" class="on">Pen</button><button data-t="eraser">Eraser</button><button data-t="fill">Fill</button><button data-t="fire">Fire</button></div>
@@ -95,7 +95,7 @@ const W=256,H=192,$=s=>document.querySelector(s);
 const mk=()=>{const c=document.createElement('canvas');c.width=W;c.height=H;return c};
 const newF=()=>({l:[mk(),mk()],sfx:-1});
 const COLS=['#141414','#e0245e','#2a5bd7','#f6f6f1'],SIZES=[1,2,4,8];
-let frames=[newF()],cur=0,layer=0,tool='pen',col=0,size=2,onion=true,playing=false,timer=null,loop=true,undoS=[],sel=0,down=false,last=null;
+let frames=[newF()],cur=0,layer=0,tool='pen',col=0,size=2,onion=true,playing=false,timer=null,loop=false,undoS=[],sel=0,down=false,last=null;
 const vc=[$('#v0').getContext('2d'),$('#v1').getContext('2d')],oc=$('#on').getContext('2d'),wrap=$('#wrap');
 const say=t=>{$('#msg').textContent=t};
 function comp(f,ctx,w,h){ctx.imageSmoothingEnabled=false;ctx.fillStyle='#f6f6f1';ctx.fillRect(0,0,w,h);f.l.forEach(c=>ctx.drawImage(c,0,0,w,h))}
