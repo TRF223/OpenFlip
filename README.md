@@ -2,7 +2,6 @@
   <img src="logo.jpg" alt="OpenFlip logo" width="240">
 </p>
 
-<h1 align="center">OpenFlip</h1>
 
 <p align="center">A flipbook animator inspired by Flipnote Studio. It runs from a single HTML file and has a built-in bitcrusher for sound.</p>
 
