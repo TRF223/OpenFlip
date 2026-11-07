@@ -1,6 +1,10 @@
-# OpenFlip
+<p align="center">
+  <img src="logo.jpg" alt="OpenFlip logo" width="240">
+</p>
 
-A flipbook animator inspired by Flipnote Studio. It runs from a single HTML file and has a built-in bitcrusher for sound.
+<h1 align="center">OpenFlip</h1>
+
+<p align="center">A flipbook animator inspired by Flipnote Studio. It runs from a single HTML file and has a built-in bitcrusher for sound.</p>
 
 ## Features
 - 256×192 pixel canvas, two layers, pen / eraser / fill, four colours, four brush sizes
